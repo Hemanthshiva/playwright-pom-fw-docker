@@ -1,0 +1,40 @@
+{
+  "name": "playwright-framework",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "clean:reports": "rimraf allure-report allure-results && mkdirp allure-report allure-results",
+    "generate:reports": "npx allure generate ./allure-results --clean",
+    "open:reports": "npx allure open ./allure-report",
+    "pretest": "npm run clean:reports",
+    "posttest": "npm run generate:reports && npm run open:reports",
+    "test:ui": "npx playwright test tests/ui/ --project=chromium --headed",
+    "test:api": "npx playwright test tests/api/ --project=chromium",
+    "test:ui:report": "npm run clean:reports && npm run test:ui || npm run posttest",
+    "test:api:report": "npm run clean:reports && npm run test:api || npm run posttest",
+    "test": "npx playwright test --project=chromium"
+  },
+  "keywords": [],
+  "author": "Hemanth Shiva",
+  "license": "ISC",
+  "devDependencies": {
+    "@faker-js/faker": "^9.7.0",
+    "@playwright/test": "^1.51.1",
+    "@types/node": "^20.12.7",
+    "@types/xml2js": "^0.4.14",
+    "allure-commandline": "^2.24.0",
+    "allure-playwright": "^2.8.1",
+    "csv-parse": "^5.5.0",
+    "csv-parser": "^3.0.0",
+    "csv-writer": "^1.6.0",
+    "luxon": "^3.4.3",
+    "mkdirp": "^3.0.1",
+    "rimraf": "^5.0.1"
+  },
+  "dependencies": {
+    "playwright": "^1.51.1",
+    "xml-js": "^1.6.11",
+    "xml2js": "^0.6.2"
+  }
+}
