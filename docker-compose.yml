@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  playwright-tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: development
+    image: playwright-tests:latest
+    container_name: playwright_automation
+    user: root
+    volumes:
+      - ./test-results:/app/test-results
+      - ./playwright-report:/app/playwright-report
+      - ./allure-results:/app/allure-results
+
+
+    environment:
+      - NODE_ENV=development
+      - PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=0
+    healthcheck:
+      test: ["CMD", "node", "-e", "process.exit(0)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+        reservations:
+          memory: 2G
+    ulimits:
+      core: 99999999999
+    security_opt:
+      - seccomp=unconfined
+    shm_size: '2gb'
+    ipc: host
+    depends_on:
+      - allure
+    entrypoint: []
+    command: >
+      /bin/bash -c "
+        npm install -g npm@latest &&
+        npm install -g allure-commandline --save-dev &&
+        npx playwright install --with-deps chromium firefox webkit &&
+        chown -R playwright:playwright /app &&
+        rm -rf /app/allure-results/* /app/allure-report/* &&
+        mkdir -p /app/allure-results /app/allure-report &&
+        su playwright -c 'NODE_OPTIONS=--max_old_space_size=4096 npx playwright test' &&
+        allure generate allure-results --clean -o allure-report
+      "
+    ports:
+      - "9323:9323"
+    networks:
+      - playwright-network
+
+  allure:
+    image: "frankescobar/allure-docker-service"
+    container_name: allure_service
+    user: root
+    environment:
+      CHECK_RESULTS_EVERY_SECONDS: 1
+      KEEP_HISTORY: 1
+      ALLURE_DOCKER_PUBLIC_API_URL: http://localhost:5050
+      ALLURE_DOCKER_PUBLIC_API_URL_PREFIX: ""
+    ports:
+      - "5050:5050"
+      - "8080:8080"
+    volumes:
+      - ./allure-results:/app/allure-docker-api/static/projects/default/results
+      - ./allure-report:/app/allure-docker-api/static/projects/default/reportsc/projects/default/reports
+    networks:
+      - playwright-network
+
+networks:
+  playwright-network:
+    driver: bridge
