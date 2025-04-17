@@ -1,0 +1,16 @@
+{
+    "isbn": "123-456-222",
+    "author": {
+        "lastname": "Doe",
+        "firstname": "Jane"
+    },
+    "editor": {
+        "lastname": "$EDITOR_LASTNAME_VARIABLE$",
+        "firstname": "$EDITOR_FIRSTNAME_VARIABLE$"
+    },
+    "title": "The Ultimate Database Study Guide",
+    "category": [
+        "Non-Fiction",
+        "Technology"
+    ]
+}

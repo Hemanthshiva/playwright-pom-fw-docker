@@ -1,0 +1,11 @@
+{
+    "firstname": "John",
+    "lastname": "$LASTNAME_VARIABLE$",
+    "totalprice": 100,
+    "depositpaid": true,
+    "bookingdates": {
+        "checkin": "2025-01-01",
+        "checkout": "2025-01-05"
+    },
+    "additionalneeds": "Extra bed"
+}
